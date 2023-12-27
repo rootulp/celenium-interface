@@ -80,15 +80,11 @@ useHead({
 
 <template>
 	<Flex direction="column" wide :class="$style.wrapper">
-		<Breadcrumbs
-			v-if="block"
-			:items="[
-				{ link: '/', name: 'Explore' },
-				{ link: '/blocks', name: 'Blocks' },
-				{ link: route.fullPath, name: `Block ${comma(block.height)}` },
-			]"
-			:class="$style.breadcrumbs"
-		/>
+		<Breadcrumbs v-if="block" :items="[
+			{ link: '/', name: 'Explore' },
+			{ link: '/blocks', name: 'Blocks' },
+			{ link: route.fullPath, name: `Block ${comma(block.height)}` },
+		]" :class="$style.breadcrumbs" />
 
 		<Flex v-if="block" direction="column" gap="40">
 			<BlockOverview :block="block" />

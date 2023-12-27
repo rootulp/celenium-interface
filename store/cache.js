@@ -21,6 +21,8 @@ export const useCacheStore = defineStore("cache", () => {
 		events: null,
 		/** address */
 		address: null,
+		/** original data square */
+		originalDataSquare: null,
 	})
 
 	return { selectedBlob, current }

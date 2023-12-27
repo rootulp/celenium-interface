@@ -72,6 +72,7 @@ const getTransactions = async () => {
 	if (data.value?.length) {
 		transactions.value = data.value
 		cacheStore.current.transactions = transactions.value
+		cacheStore.current.originalDataSquare = transactions.value
 	}
 
 	isRefetching.value = false
@@ -135,6 +136,11 @@ const handleViewRawTransactions = () => {
 	cacheStore.current._target = "transactions"
 	modalsStore.open("rawData")
 }
+
+const handleViewOriginalDataSquare = () => {
+	cacheStore.current._target = "originalDataSquare"
+	modalsStore.open("rawData")
+}
 </script>
 
 <template>
@@ -153,6 +159,7 @@ const handleViewRawTransactions = () => {
 				<template #popup>
 					<DropdownItem @click="handleViewRawBlock"> View Raw Block </DropdownItem>
 					<DropdownItem @click="handleViewRawTransactions"> View Raw Transactions </DropdownItem>
+					<DropdownItem @click="handleViewOriginalDataSquare"> View Original Data Square </DropdownItem>
 				</template>
 			</Dropdown>
 		</Flex>
@@ -190,14 +197,14 @@ const handleViewRawTransactions = () => {
 
 							<Flex align="center" gap="6">
 								<Icon name="time" size="12" color="secondary" />
-								<Text size="12" weight="600" color="primary"> {{ (block.stats.block_time / 1_000).toFixed(2) }}s </Text>
+								<Text size="12" weight="600" color="primary"> {{ (block.stats.block_time / 1_000).toFixed(2)
+								}}s </Text>
 							</Flex>
 
 							<div v-for="dot in 5" class="dot" />
 
 							<Text size="12" weight="600" color="secondary" align="right">
-								{{ DateTime.fromISO(block.time).setLocale("en").toFormat("TT") }}</Text
-							>
+								{{ DateTime.fromISO(block.time).setLocale("en").toFormat("TT") }}</Text>
 						</Flex>
 					</Badge>
 				</Flex>
@@ -212,7 +219,8 @@ const handleViewRawTransactions = () => {
 							</Text>
 
 							<Flex align="center" gap="6">
-								<Text size="12" weight="600" color="tertiary" mono>{{ block.proposer.cons_address.slice(0, 4) }}</Text>
+								<Text size="12" weight="600" color="tertiary" mono>{{ block.proposer.cons_address.slice(0,
+									4) }}</Text>
 
 								<Flex align="center" gap="3">
 									<div v-for="dot in 3" class="dot" />
@@ -243,7 +251,8 @@ const handleViewRawTransactions = () => {
 
 						<Flex align="center" justify="between">
 							<Text size="12" weight="600" color="tertiary"> Blobs Size</Text>
-							<Text size="12" weight="600" color="secondary"> {{ formatBytes(block.stats.blobs_size) }} </Text>
+							<Text size="12" weight="600" color="secondary"> {{ formatBytes(block.stats.blobs_size) }}
+							</Text>
 						</Flex>
 						<Flex align="center" justify="between">
 							<Text size="12" weight="600" color="tertiary"> Events</Text>
@@ -259,7 +268,8 @@ const handleViewRawTransactions = () => {
 						</Flex>
 						<Flex align="center" justify="between">
 							<Text size="12" weight="600" color="tertiary"> Bytes in block </Text>
-							<Text size="12" weight="600" color="secondary"> {{ formatBytes(block.stats.bytes_in_block) }}</Text>
+							<Text size="12" weight="600" color="secondary"> {{ formatBytes(block.stats.bytes_in_block)
+							}}</Text>
 						</Flex>
 					</Flex>
 				</Flex>
@@ -268,13 +278,8 @@ const handleViewRawTransactions = () => {
 			<Flex direction="column" gap="4" wide :class="$style.txs_wrapper">
 				<Flex align="center" justify="between" :class="$style.tabs_wrapper">
 					<Flex gap="4" :class="$style.tabs">
-						<Flex
-							@click="activeTab = tab"
-							v-for="tab in tabs"
-							align="center"
-							gap="6"
-							:class="[$style.tab, activeTab === tab && $style.active]"
-						>
+						<Flex @click="activeTab = tab" v-for="tab in tabs" align="center" gap="6"
+							:class="[$style.tab, activeTab === tab && $style.active]">
 							<Text size="13" weight="600">{{ tab }}</Text>
 
 							<Text v-if="getTxnsCountByTab(tab)" size="11" height="110" weight="600" :class="$style.badge">
@@ -301,11 +306,8 @@ const handleViewRawTransactions = () => {
 									<td style="width: 1px">
 										<Tooltip position="start" delay="500">
 											<Flex align="center" gap="8">
-												<Icon
-													:name="tx.status === 'success' ? 'check-circle' : 'close-circle'"
-													size="14"
-													:color="tx.status === 'success' ? 'green' : 'red'"
-												/>
+												<Icon :name="tx.status === 'success' ? 'check-circle' : 'close-circle'"
+													size="14" :color="tx.status === 'success' ? 'green' : 'red'" />
 
 												<Text size="13" weight="600" color="primary" mono>{{
 													tx.hash.slice(0, 4).toUpperCase()
@@ -327,17 +329,17 @@ const handleViewRawTransactions = () => {
 													<Flex align="center" gap="4">
 														<Icon
 															:name="tx.status === 'success' ? 'check-circle' : 'close-circle'"
-															size="13"
-															:color="tx.status === 'success' ? 'green' : 'red'"
-														/>
+															size="13" :color="tx.status === 'success' ? 'green' : 'red'" />
 														<Text size="13" weight="600" color="primary">
-															{{ tx.status === "success" ? "Successful" : "Failed" }} Transaction
+															{{ tx.status === "success" ? "Successful" : "Failed" }}
+															Transaction
 														</Text>
 													</Flex>
 
 													{{ space(tx.hash).toUpperCase() }}
 
-													<Text height="120" color="tertiary" style="max-width: 400px" mono align="left">
+													<Text height="120" color="tertiary" style="max-width: 400px" mono
+														align="left">
 														{{ tx.error }}
 													</Text>
 												</Flex>
@@ -369,10 +371,12 @@ const handleViewRawTransactions = () => {
 
 											<template #content>
 												<Flex align="center" gap="4">
-													<Text size="13" weight="600" color="primary">{{ comma(tx.gas_used) }}</Text>
+													<Text size="13" weight="600" color="primary">{{ comma(tx.gas_used)
+													}}</Text>
 													<Text size="13" weight="600" color="tertiary">/</Text>
-													<Text size="13" weight="600" color="secondary">{{ comma(tx.gas_wanted) }}</Text></Flex
-												>
+													<Text size="13" weight="600" color="secondary">{{ comma(tx.gas_wanted)
+													}}</Text>
+												</Flex>
 											</template>
 										</Tooltip>
 									</td>
@@ -387,7 +391,8 @@ const handleViewRawTransactions = () => {
 						</table>
 					</div>
 
-					<Flex v-else-if="!isRefetching" align="center" justify="center" direction="column" gap="8" wide :class="$style.empty">
+					<Flex v-else-if="!isRefetching" align="center" justify="center" direction="column" gap="8" wide
+						:class="$style.empty">
 						<Text size="13" weight="600" color="secondary" align="center"> No transactions </Text>
 						<Text size="12" weight="500" height="160" color="tertiary" align="center" style="max-width: 220px">
 							This block does not contain transactions of the selected type
@@ -408,7 +413,8 @@ const handleViewRawTransactions = () => {
 						<Button @click="handleNext" type="secondary" size="mini" :disabled="page === pages">
 							<Icon name="arrow-narrow-right" size="12" color="primary" />
 						</Button>
-						<Button @click="page = pages" type="secondary" size="mini" :disabled="page === pages"> Last </Button>
+						<Button @click="page = pages" type="secondary" size="mini" :disabled="page === pages"> Last
+						</Button>
 					</Flex>
 				</Flex>
 			</Flex>
